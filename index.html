@@ -1,37 +1,58 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Task Manager</title>
-
+    <title>Advanced Task Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
 
     <main class="container">
+        <header>
+            <h1>My Task Manager</h1>
+            <p class="subtitle">Organize your daily tasks smoothly.</p>
+        </header>
 
-        <h1>My Task Manager</h1>
-        <p class="subtitle">Organize your daily tasks.</p>
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search tasks..." autocomplete="off">
+        </div>
 
+        <!-- Add Task Form -->
         <form id="task-form">
-            <input
-                type="text"
-                id="task-input"
-                placeholder="Enter a task..."
-                autocomplete="off"
-            >
-
-            <button type="submit">Add Task</button>
+            <div class="input-group">
+                <input type="text" id="task-input" placeholder="What needs to be done?" autocomplete="off" required>
+                <input type="date" id="date-input">
+                <select id="priority-input">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+            </div>
+            <button type="submit" id="add-btn">Add Task</button>
         </form>
 
+        <!-- Filters -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+        </div>
+
+        <!-- Task List -->
         <ul id="task-list"></ul>
+        <p id="empty-message">No tasks found. Add one above!</p>
 
-        <p id="empty-message">No tasks yet. Add one!</p>
-
+        <!-- Footer Stats -->
+        <div class="task-footer">
+            <span id="task-stats">0 tasks left</span>
+            <button id="clear-completed" class="clear-btn">Clear Completed</button>
+        </div>
     </main>
 
 </body>
