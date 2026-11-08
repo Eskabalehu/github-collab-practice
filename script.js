@@ -1,67 +1,152 @@
-const taskForm = document.getElementById("task-form");
-const taskInput = document.getElementById("task-input");
-const taskList = document.getElementById("task-list");
-const emptyMessage = document.getElementById("empty-message");
+// Select DOM Elements
+const taskForm = document.getElementById('task-form');
+const taskInput = document.getElementById('task-input');
+const dateInput = document.getElementById('date-input');
+const priorityInput = document.getElementById('priority-input');
+const taskList = document.getElementById('task-list');
+const emptyMessage = document.getElementById('empty-message');
+const searchInput = document.getElementById('search-input');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const taskStats = document.getElementById('task-stats');
+const clearCompletedBtn = document.getElementById('clear-completed');
 
-let tasks = [];
+// State Variables
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let currentFilter = 'all'; // 'all', 'active', 'completed'
+let searchQuery = '';
 
-// Display all tasks
+// Initialize App
+function init() {
+    renderTasks();
+}
+
+// Save to LocalStorage
+function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    renderTasks();
+}
+
+// Handle Form Submit (Add Task)
+taskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = taskInput.value.trim();
+    if (!text) return;
+
+    const newTask = {
+        id: Date.now().toString(),
+        text: text,
+        date: dateInput.value,
+        priority: priorityInput.value,
+        completed: false
+    };
+
+    tasks.push(newTask);
+    taskInput.value = '';
+    dateInput.value = '';
+    priorityInput.value = 'medium';
+    saveTasks();
+});
+
+// Delete Task
+function deleteTask(id) {
+    tasks = tasks.filter(task => task.id !== id);
+    saveTasks();
+}
+
+// Toggle Complete
+function toggleComplete(id) {
+    tasks = tasks.map(task => 
+        task.id === id ? { ...task, completed: !task.completed } : task
+    );
+    saveTasks();
+}
+
+// Edit Task
+function editTask(id) {
+    const task = tasks.find(t => t.id === id);
+    const newText = prompt("Edit your task:", task.text);
+    if (newText !== null && newText.trim() !== '') {
+        task.text = newText.trim();
+        saveTasks();
+    }
+}
+
+// Search Feature
+searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase();
+    renderTasks();
+});
+
+// Filter Feature
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderTasks();
+    });
+});
+
+// Clear Completed
+clearCompletedBtn.addEventListener('click', () => {
+    tasks = tasks.filter(task => !task.completed);
+    saveTasks();
+});
+
+// Render Tasks
 function renderTasks() {
-    taskList.innerHTML = "";
+    taskList.innerHTML = '';
+    
+    // Apply filters & search
+    let filteredTasks = tasks.filter(task => {
+        const matchesSearch = task.text.toLowerCase().includes(searchQuery);
+        const matchesFilter = currentFilter === 'all' ? true 
+                            : currentFilter === 'active' ? !task.completed 
+                            : task.completed;
+        return matchesSearch && matchesFilter;
+    });
 
-    emptyMessage.style.display =
-        tasks.length === 0 ? "block" : "none";
+    // Update Stats (Ito yung naputol na part)
+    const activeTasksCount = tasks.filter(t => !t.completed).length;
+    taskStats.textContent = `${activeTasksCount} task${activeTasksCount !== 1 ? 's' : ''} left`;
 
-    tasks.forEach((task, index) => {
-        const li = document.createElement("li");
+    // Show empty message if needed
+    if (filteredTasks.length === 0) {
+        emptyMessage.style.display = 'block';
+    } else {
+        emptyMessage.style.display = 'none';
+    }
 
-        const taskName = document.createElement("span");
-        taskName.textContent = task.name;
-        taskName.classList.add("task-name");
+    // Create DOM for each task
+    filteredTasks.forEach(task => {
+        const li = document.createElement('li');
+        if (task.completed) li.classList.add('completed');
 
-        if (task.completed) {
-            taskName.classList.add("completed");
+        // Date Badge Formatting
+        let dateHtml = '';
+        if (task.date) {
+            dateHtml = `<span class="badge due-badge">📅 ${task.date}</span>`;
         }
 
-        // Mark task as complete or incomplete
-        taskName.addEventListener("click", () => {
-            tasks[index].completed = !tasks[index].completed;
-            renderTasks();
-        });
-
-        // Delete task
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.classList.add("delete-button");
-
-        deleteButton.addEventListener("click", () => {
-            tasks.splice(index, 1);
-            renderTasks();
-        });
-
-        li.append(taskName, deleteButton);
+        li.innerHTML = `
+            <div class="task-info">
+                <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleComplete('${task.id}')">
+                <div>
+                    <div class="task-name" onclick="toggleComplete('${task.id}')">${task.text}</div>
+                    <div class="badges">
+                        <span class="badge priority-${task.priority}">${task.priority.toUpperCase()}</span>
+                        ${dateHtml}
+                    </div>
+                </div>
+            </div>
+            <div class="task-actions">
+                <button class="edit-btn" onclick="editTask('${task.id}')">✎</button>
+                <button class="delete-btn" onclick="deleteTask('${task.id}')">✖</button>
+            </div>
+        `;
         taskList.appendChild(li);
     });
 }
 
-// Add new task
-taskForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const taskName = taskInput.value.trim();
-
-    if (taskName === "") {
-        return;
-    }
-
-    tasks.push({
-        name: taskName,
-        completed: false
-    });
-
-    taskInput.value = "";
-    renderTasks();
-});
-
-// Initial display
-renderTasks();
+// Run on load
+init();
