@@ -1,58 +1,163 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Task Manager</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
 
     <main class="container">
+
+        <!-- ORIGINAL TASK MANAGER -->
         <header>
             <h1>My Task Manager</h1>
             <p class="subtitle">Organize your daily tasks smoothly.</p>
         </header>
 
-        <!-- Search Bar -->
         <div class="search-container">
             <input type="text" id="search-input" placeholder="Search tasks..." autocomplete="off">
         </div>
 
-        <!-- Add Task Form -->
         <form id="task-form">
             <div class="input-group">
                 <input type="text" id="task-input" placeholder="What needs to be done?" autocomplete="off" required>
                 <input type="date" id="date-input">
+
                 <select id="priority-input">
                     <option value="low">Low Priority</option>
                     <option value="medium" selected>Medium Priority</option>
                     <option value="high">High Priority</option>
                 </select>
             </div>
+
             <button type="submit" id="add-btn">Add Task</button>
         </form>
 
-        <!-- Filters -->
         <div class="filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="active">Active</button>
-            <button class="filter-btn" data-filter="completed">Completed</button>
+            <button class="filter-btn active" data-filter="all" type="button">All</button>
+            <button class="filter-btn" data-filter="active" type="button">Active</button>
+            <button class="filter-btn" data-filter="completed" type="button">Completed</button>
         </div>
 
-        <!-- Task List -->
         <ul id="task-list"></ul>
+
         <p id="empty-message">No tasks found. Add one above!</p>
 
-        <!-- Footer Stats -->
         <div class="task-footer">
             <span id="task-stats">0 tasks left</span>
-            <button id="clear-completed" class="clear-btn">Clear Completed</button>
+            <button id="clear-completed" class="clear-btn" type="button">Clear Completed</button>
         </div>
+
+        <!-- NEW TASKFLOW DASHBOARD -->
+        <section class="dashboard">
+
+            <div class="dashboard-header">
+                <div>
+                    <h2>TaskFlow Dashboard</h2>
+                    <p class="dashboard-subtitle">
+                        Monitor your productivity and task progress.
+                    </p>
+                </div>
+            </div>
+
+            <!-- STATISTICS CARDS -->
+            <div class="stats-grid">
+
+                <div class="stat-card total-card">
+                    <p>Total Tasks</p>
+                    <h3 id="total-count">0</h3>
+                    <span>All tasks</span>
+                </div>
+
+                <div class="stat-card completed-card">
+                    <p>Completed</p>
+                    <h3 id="completed-count">0</h3>
+                    <span id="completion-rate">0% completion rate</span>
+                </div>
+
+                <div class="stat-card progress-card">
+                    <p>In Progress</p>
+                    <h3 id="progress-count">0</h3>
+                    <span>Currently working on</span>
+                </div>
+
+                <div class="stat-card todo-card">
+                    <p>To Do</p>
+                    <h3 id="todo-count">0</h3>
+                    <span>Pending tasks</span>
+                </div>
+
+            </div>
+
+            <!-- CHARTS -->
+            <div class="dashboard-charts">
+
+                <div class="dashboard-panel">
+                    <h3>7-Day Progress</h3>
+                    <p class="panel-subtitle">Tasks completed during the last 7 days</p>
+
+                    <div id="weekly-chart" class="weekly-chart"></div>
+
+                    <div class="chart-legend">
+                        <span><i class="legend-completed"></i> Completed</span>
+                        <span><i class="legend-pending"></i> Pending</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-panel">
+                    <h3>Priority Distribution</h3>
+                    <p class="panel-subtitle">Breakdown of your task priorities</p>
+
+                    <div class="priority-chart-area">
+                        <div id="priority-chart" class="priority-chart">
+                            <div class="chart-center">
+                                <strong id="priority-total">0</strong>
+                                <span>Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="priority-legend">
+                        <span><i class="high-dot"></i> High <b id="high-count">0</b></span>
+                        <span><i class="medium-dot"></i> Medium <b id="medium-count">0</b></span>
+                        <span><i class="low-dot"></i> Low <b id="low-count">0</b></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- DEADLINE SECTIONS -->
+            <div class="dashboard-lists">
+
+                <div class="dashboard-panel">
+                    <h3>Upcoming Deadlines</h3>
+                    <p class="panel-subtitle">Your upcoming tasks</p>
+                    <div id="upcoming-list" class="dashboard-task-list"></div>
+                </div>
+
+                <div class="dashboard-panel">
+                    <h3 class="overdue-title">
+                        Overdue Tasks
+                        <span id="overdue-count" class="overdue-count">0</span>
+                    </h3>
+                    <p class="panel-subtitle">Tasks past their due date</p>
+                    <div id="overdue-list" class="dashboard-task-list"></div>
+                </div>
+
+            </div>
+
+        </section>
+        <!-- END OF DASHBOARD -->
+
     </main>
 
 </body>
